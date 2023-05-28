@@ -17,6 +17,7 @@ def index():
 
     if not record.items:
         collection.create(data)
+
         return {"message": "OK"}
 
     item = record.items[0]
@@ -37,6 +38,8 @@ def index():
     updated_item_data = {
         "playerUID": item.player_uid,
         "playerName": item.player_name,
+        "discordUserId": item.discord_user_id,
+        "discordChannelId": item.discord_channel_id,
         "data": item.data,
     }
     collection.update(item.id, updated_item_data)
@@ -56,6 +59,8 @@ def get_player_data(playerUID):
         {
             "playerUID": str(item.player_uid),
             "playerName": item.player_name,
+            "discordUserId": item.discord_user_id,
+            "discordChannelId": item.discord_channel_id,
             "data": item.data,
         }
     )
