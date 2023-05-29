@@ -1,7 +1,10 @@
+import requests
 from flask import Flask, request, jsonify
 from pb import client
+import os
 
 
+url = os.getenv("WEBHOOK_URL")
 collection = client.collection("bootcamp")
 app = Flask(__name__)
 
@@ -67,6 +70,20 @@ def get_player_data(playerUID):
             "data": item["data"],
         }
     )
+
+
+@app.route("/bootcamp/<playerUID>/finished", methods=["GET"])
+def finish_bootcamp(playerUID):
+    record = collection.get_list(1, 1, {"filter": f"playerUID = {playerUID}"})
+
+    if not record.items:
+        return jsonify({"error": "Player not found"}), 404
+
+    collection_item = record.items[0]
+    data = collection_item.collection_id
+    requests.post(url, json={"content": data["playerUID"]})
+
+    return jsonify({"message": f"Player {playerUID} has finished the bootcamp."})
 
 
 if __name__ == "__main__":
